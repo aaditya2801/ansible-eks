@@ -74,4 +74,3 @@ spec:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
           claimName: ebs-storage-sql
-
