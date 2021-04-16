@@ -44,3 +44,15 @@ In this role, I have covered the deployment of WordPress with MySQL Server on mu
 ## Future Scope: 
 I can add more AWS resources like KMS for creating and managing cryptographic keys for Security and Encrypting Volume, it can integrate with AWS CloudTrail to provide us with logs of all key usage. Replacing EBS with EFS, so PVC will be bound with AWS-EFS Storage Class are some of my Future Work for this Project.
 
+## playbook for executing role
+
+- hosts: localhost
+  vars_prompt:
+  - name: "access_key"
+    prompt: "Enter access key"
+    private: yes
+  - name: "secret_key"
+    prompt: "Enter secret key"
+    private: yes
+  roles:
+  - role: ansible-eks
