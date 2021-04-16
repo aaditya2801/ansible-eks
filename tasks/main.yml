@@ -156,3 +156,4 @@
   command: "kubectl create -f /root/Ansible-Project/ansible-eks/files/wordpress.yml"
 - name: creating mysql deployment
   command: "kubectl create -f /root/Ansible-Project/ansible-eks/files/mysql.yml"
+  ...
