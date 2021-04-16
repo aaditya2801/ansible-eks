@@ -3,19 +3,22 @@
 
 - name: Installing Collection
   command: "ansible-galaxy collection install amazon.aws"
+
 - name: Install boto python package
   pip:
     name:
        - "{{ pkg1 }}"
        - "{{ pkg2 }}"
        - "{{ pkg3 }}"
- - name: Configuring aws credentials
+ 
+- name: Configuring aws credentials
   blockinfile:
     path: /root/.aws/credentials
     block: |
       [default]
       aws_access_key_id = "{{ access_key }}"
       aws_secret_access_key = "{{ secret_key }}"
+
 - name: Configuring aws config
   blockinfile:
     path: /root/.aws/config
@@ -23,6 +26,7 @@
       [default]
       region = "{{ region_name }}"
       output = "{{ op }}"
+
 - name: creating VPC
   ec2_vpc_net:
     name: "{{ vpc_name }}"
@@ -32,7 +36,10 @@
       region: "{{ region_name }}"
     aws_access_key: "{{ access_key }}"
     aws_secret_key: "{{ secret_key }}"
+
   register: vpc
+
+
 - name: Creating subnet1
   ec2_vpc_subnet:
     state: present
@@ -43,6 +50,7 @@
     tags:
       Name: "{{ sub1 }}"
   register: subnet1
+
 - name: Creating subnet2
   ec2_vpc_subnet:
     state: present
@@ -53,6 +61,7 @@
     tags:
       Name: "{{ sub2 }}"
   register: subnet2
+
 - name: Creating internet gateway
   ec2_vpc_igw:
     vpc_id: "{{ vpc.vpc.id }}"
@@ -60,6 +69,7 @@
     tags:
       Name: "{{ ig }}"
   register: igw
+
 - name: Set up public subnet route table
   ec2_vpc_route_table:
     vpc_id: "{{ vpc.vpc.id }}"
@@ -73,6 +83,7 @@
       - dest: "{{ cidr4 }}"
         gateway_id: "{{ igw.gateway_id }}"
   register: public_route_table
+
 - name: creating security group
   ec2_group:
     name: "{{ sg }}"
@@ -97,6 +108,7 @@
         to_port: "{{ port4 }}"
         cidr_ip: "{{ cidr4 }}"
   register: sg
+
 - name: "Create a role and attach a managed policy called 'eks cluster'"
   iam_role:
      name: "{{ role1 }}"
@@ -104,7 +116,8 @@
      managed_policy:
      - "{{ policy1 }}"
   register: role1
- - name: "Create a role and attach a managed policy called 'ec2,eks_worker_node,& container registry'"
+ 
+- name: "Create a role and attach a managed policy called 'ec2,eks_worker_node,& container registry'"
   iam_role:
     name: "{{ role2 }}"
     assume_role_policy_document: "{{ lookup('file','policy2.json') }}"
@@ -114,6 +127,7 @@
     - "{{ policy4 }}"
     - "{{ policy5 }}"
   register: role2
+
 - name: Create an EKS cluster
   aws_eks_cluster:
     name: "{{ cluster_name }}"
@@ -125,14 +139,18 @@
     security_groups: "{{ sg.group_id }}"
     role_arn: "{{ role1.arn }}"
     state: present
+
 - name: Pause for 15 minutes to build MasterNode
   pause:
     minutes: 15
+
 - name: Configuring Worker Nodes
   command: "aws eks create-nodegroup --cluster-name {{ cluster_name }} --nodegroup-name {{ node_grp }} --disk-size {{ size }} --subnets {{ subnet1.subnet.id }} {{ subnet2.subnet.id }} --scaling-config minSize=1,maxSize=3,desiredSize=3 --instance-types {{ instance }}  --ami-type {{ ami }} --node-role {{ role2.arn }}  --tags KeyName1=Worker_Nodes,KeyName2=EKS"
+
 - name: Pause for 2 minutes to build WorkerNodes
   pause:
     minutes: 2
+
 - name: Configuring Yum repo for k8s
   yum_repository:
     name: "{{ repo_name }}"
@@ -142,18 +160,23 @@
     gpgcheck: yes
     repo_gpgcheck: yes
     gpgkey: "{{ g_key }}"
+
 - name: installation of kubectl
   package:
     name: "kubectl"
     state: present
+
 - name: Getting Cluster Details
   command: "aws eks --region {{ region_name }} update-kubeconfig --name {{ cluster_name }}"
+
 - name: storing secret file
   command: "kubectl apply -f /root/Ansible-Project/ansible-eks/files/secret.yml"
+
 - name: creating storage class
   command: "kubectl apply -f /root/Ansible-Project/ansible-eks/files/sc.yml"
+
 - name: creating wordpress deployment
   command: "kubectl create -f /root/Ansible-Project/ansible-eks/files/wordpress.yml"
+
 - name: creating mysql deployment
   command: "kubectl create -f /root/Ansible-Project/ansible-eks/files/mysql.yml"
-  ...
