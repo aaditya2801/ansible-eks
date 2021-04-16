@@ -1,0 +1,46 @@
+---
+# vars file for ansible-eks
+
+cluster_name: "k8s_cluster"
+k8s_version: "1.18"
+region_name: "ap-south-1"
+policy1: "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+policy2: "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+policy3: "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+policy4: "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+policy5: "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+az1: "ap-south-1a"
+az2: "ap-south-1b"
+cidr1: "192.168.0.0/16"
+cidr2: "192.168.0.0/24" 
+cidr3: "192.168.1.0/24"
+cidr4: "0.0.0.0/0"
+proto1: "tcp"
+proto2: "icmp"
+port1: 80
+port2: 22
+port3: 3306
+port4: -1
+role1: "eks_cluster_role"
+role2: "ec2_role"
+node_grp: "nodes_for_eks"
+size: 8
+instance: "t2.micro"
+ami: "AL2_x86_64"
+device: "gp2"
+pkg1: "boto"
+pkg2: "boto3"
+pkg3: "awscli"
+op: "json"
+vpc_name: "myvpc"
+env: "Development"
+sub1: "Subnet1"
+sub2: "Subnet2"
+ig: "IGW"
+rt: "Public_route_table"
+sg: "security_group_for_eks"
+sg_des: "sg for eks cluster"
+b_url: "https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64"
+g_key: "https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg"
+repo_name: "kubernetes"
+repo_desc: "k8s yum repo"
